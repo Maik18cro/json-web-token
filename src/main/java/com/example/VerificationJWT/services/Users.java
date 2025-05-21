@@ -1,23 +1,23 @@
 package com.example.VerificationJWT.services;
 
 public class Users {
-//    private int id;
+    private int id;
     private String email;
     private String name;
     private String password;
-//    private String city;
+    private String city;
 
 
-    public Users(String email, String name, String password){
-//        this.id = id;
+    public Users(int id,String email, String name, String password,String city){
+        this.id = id;
         this.email= email;
         this.name = name;
         this.password = password;
-//        this.city = city;
+        this.city = city;
     }
-//    public int getId(){
-//        return id;
-//    }
+    public int getId(){
+        return id;
+    }
     public String getEmail(){
         return email;
     }
@@ -27,9 +27,9 @@ public class Users {
     public String getPassword(){
         return password;
     }
-//    public String getCity(){
-//        return city;
-//    }
+    public String getCity(){
+        return city;
+    }
 
 
 }
