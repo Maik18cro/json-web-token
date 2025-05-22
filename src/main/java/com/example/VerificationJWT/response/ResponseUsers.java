@@ -1,18 +1,17 @@
 package com.example.VerificationJWT.response;
 
-import java.util.List;
+import com.example.VerificationJWT.services.User;
 
 public class ResponseUsers extends Response {
-    private String[] data;
+    private User data;
 
 
-    public ResponseUsers (String[] data, String status, int statusCode, String message){
+    public ResponseUsers (User data, String status, int statusCode, String message){
         super(status,statusCode, message);
         this.data = data;
-
     }
 
-    public String[] getData () {
+    public User getData () {
         return data;
     }
 

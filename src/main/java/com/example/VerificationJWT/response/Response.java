@@ -1,10 +1,10 @@
 package com.example.VerificationJWT.response;
 
 public class Response  {
-
     private String status;
     private int statusCode;
     private String message;
+
     public Response(String status,int statusCode,String message){
         this.status = status;
         this.statusCode = statusCode;
@@ -13,19 +13,13 @@ public class Response  {
      public String getStatus(){
         return status;
      }
-    public void setStatus(String status){
-        this.status = status;
-     }
+
     public int getStatusCode(){
         return statusCode;
     }
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
+
     public String getMessage(){
         return message;
     }
-    public void setMessage(String message) {
-        this.message = message;
-    }
+
 }

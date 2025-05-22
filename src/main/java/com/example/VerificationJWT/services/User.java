@@ -1,6 +1,6 @@
 package com.example.VerificationJWT.services;
 
-public class Users {
+public class User {
     private int id;
     private String email;
     private String name;
@@ -8,7 +8,7 @@ public class Users {
     private String city;
 
 
-    public Users(int id,String email, String name, String password,String city){
+    public User(int id, String email, String name, String password, String city){
         this.id = id;
         this.email= email;
         this.name = name;
