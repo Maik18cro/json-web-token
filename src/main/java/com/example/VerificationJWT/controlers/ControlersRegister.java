@@ -1,25 +1,35 @@
     package com.example.VerificationJWT.controlers;
 
-import com.example.VerificationJWT.databases.DataBases;
+import com.example.VerificationJWT.databases.DataBase;
 import com.example.VerificationJWT.response.Response;
 import com.example.VerificationJWT.response.ResponseErorr;
+import com.example.VerificationJWT.response.ResponseToken;
 import com.example.VerificationJWT.response.ResponseUsers;
 import com.example.VerificationJWT.services.User;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.Jwts;
 import org.springframework.web.bind.annotation.*;
-
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
 
-@RestController
+
+    @RestController
 public class ControlersRegister {
-    DataBases dataBases = new DataBases(
+    DataBase dataBase = new DataBase(
             "email@email.com",
             "Admin",
             "Pass",
             "Bogota"
     );
+    ControlersToken controlersToken = new ControlersToken();
     @PostMapping("/register")
     @ResponseBody
     public Response Register(@RequestParam String email, @RequestParam String user, @RequestParam String password,@RequestParam String city) {
+        User emailDatabase = dataBase.getUserByEmail(email);
+        System.out.printf(String.valueOf(emailDatabase));
 
 
         if (email.isEmpty() || user.isEmpty() || password.isEmpty() || city.isEmpty()) {
@@ -28,6 +38,14 @@ public class ControlersRegister {
                     404,
                     "Not Found",
                     "complete all fields"
+            );
+        }
+        if (email.equals(emailDatabase)) {
+            return new ResponseErorr(
+                    "failure",
+                    409,
+                    "conflict in the database",
+                    "data exits"
             );
         }
 
@@ -73,11 +91,9 @@ public class ControlersRegister {
             );
         }
 
-        String encodedEmail = Base64.getEncoder().encodeToString(email.getBytes());
-        String encodedUser = Base64.getEncoder().encodeToString(user.getBytes());
         String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
 
-        User userCreated = dataBases.createNewUser(email, user, encodedPassword,city);
+        User userCreated = dataBase.createNewUser(email, user, encodedPassword,city);
 
         return new ResponseUsers(
                 userCreated,
@@ -86,21 +102,63 @@ public class ControlersRegister {
                 "all is OK"
         );
     }
-
-//    @PostMapping("/user")
-//    @ResponseBody
-//    public Object verificationUser ( @RequestParam int num){
-//        if (num < dataBases.getSizeList()) {
-//            return dataBases.getUsersById(num);
-//        } else {
-//            return new Response(
-//                    "failure",
-//                    404,
-//                    "Not Found"
-//            );
-//        }
-//    }
+        @PostMapping("/user")
+    @ResponseBody
+    public Object verificationUser ( @RequestParam int num){
+        if (num < dataBase.getUserSize()) {
+            return dataBase.getUserById(num);
+        } else {
+            return new Response(
+                    "failure",
+                    404,
+                    "Not Found"
+            );
+        }
     }
+
+        public static final String keyServer = "@siuuuuuu76543562 67876543443 234563437";
+        @PostMapping("/login")
+        @ResponseBody
+        public Response login(@RequestParam String email, @RequestParam String password) {
+        final int expirationTokenMinutes = 50;
+        String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
+        User user = dataBase.getUserByEmail(email);
+        if(email.equals(user.getEmail()) && encodedPassword.equals(user.getPassword())){
+            System.out.printf("\n"+ user.getEmail() + " " + user.getPassword());
+            HashMap<String, Object> userData = new HashMap<>();
+            userData.put("id", user.getId());
+            Date expirationToken = new Date(System.currentTimeMillis() + expirationTokenMinutes * 60 * 1000);
+            String jwt = Jwts.builder()
+                    .header()
+                    .type("JWT")
+                    .and()
+                    .setSubject(user.getName())
+                    .expiration(expirationToken)
+                    .claims(userData)
+                    .signWith(key(), Jwts.SIG.HS256)
+                    .compact();
+            System.out.printf(jwt);
+            String encodedJwt = Base64.getEncoder().encodeToString(jwt.getBytes(StandardCharsets.UTF_8));
+            return new ResponseToken(
+                    "successful process",
+                    200,
+                    "authentication complete",
+                    jwt
+            );
+        }
+        return new ResponseErorr(
+                "Error",
+                400,
+                "not found",
+                "User not found"
+        );
+    }
+        public SecretKey key() {
+            return Keys.hmacShaKeyFor(keyServer.getBytes());
+        }
+    }
+
+
 
 
 

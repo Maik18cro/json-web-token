@@ -1,6 +1,5 @@
 package com.example.VerificationJWT;
 
-import com.example.VerificationJWT.databases.DataBases;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
