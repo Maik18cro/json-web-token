@@ -1,82 +1,66 @@
 package com.example.VerificationJWT.databases;
 import com.example.VerificationJWT.services.User;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
 
 public class DataBase {
-    List<User> customers = new ArrayList<>();
-    int allowId = 0;
+    final String url = "jdbc:mysql://localhost:3306/DatabasesJwt";
+    final String userDatabases = "root";
+    final String passwordDatabases = "";
 
-    public DataBase(String email, String user, String password, String city) {
-         this.createNewUser(email, user, password, city);
-    }
-    public User getUserById(int num){
-        return customers.get(num);
-    }
-
-    public User getUserByEmail(String email) {
-        if (email == null) {
-            return null;
+    public User database(String email, String name, String password, String city) throws SQLException {
+        Connection connection = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url, userDatabases, passwordDatabases);
+            Statement statement = connection.createStatement();
+            PreparedStatement insertQuery = connection.prepareStatement("INSERT INTO DatabasesJwt (id,emailUser,nameUser, passwordUser,cityUser) VALUES (?, ?, ?, ?, ?)");
+            insertQuery.setString(1, "0");
+            insertQuery.setString(2, email);
+            insertQuery.setString(3, name);
+            insertQuery.setString(4, password);
+            insertQuery.setString(5, city);
+            insertQuery.executeUpdate();
+            System.out.println("nice");
+        } catch (SQLException e) {
+            System.out.println("error: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        for (User emailCustomer : customers) {
-            if (emailCustomer.getEmail().equals(email)) {
-                return emailCustomer;
-            }
-        }
-        return null;
-    }
-
-    public User getUserByName(String user){
-        for (User nameCustomer : customers ){
-            if (nameCustomer.getName().equals(user)){
-                return nameCustomer;
-            }
-            break;
-        }
-        return null;
-    }
-
-    public User getUserByPassword(String password){
-        for (User passwordCustomer : customers){
-            if (passwordCustomer.getPassword().equals(password)){
-                return passwordCustomer;
-            }
-            break;
-        }
+        System.out.println("success");
+        connection.close();
         return null;
     }
 
 
-    public User createNewUser(String email, String user, String password, String city) {
-        int id = allowId;
-        User newUser = new User(
-                id,
-                email,
-                user,
-                password,
-                city
-        );
 
-        customers.add(newUser);
-        allowId++;
+public User loginVerication(String email, String password) {
+    Connection connection = null;
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        connection = DriverManager.getConnection(url, userDatabases, passwordDatabases);
+        System.out.println("conexion");
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT (emailUser) FROM DatabasesJwt WHERE emailUser = " + email);
+//        ResultSet resultSet = statement.executeQuery("SELECT * FROM DatabasesJwt ");
 
-        return this.getUserById(id);
+//            System.out.println("ID: " + resultSet.getInt("id"));
+            System.out.println("Email: " + resultSet.getString("emailUser"));
+//            System.out.println("Name: " + resultSet.getString("nameUser"));
+//            System.out.println("Password: " + resultSet.getString("passwordUser").equals(password));
+//            System.out.println("City: " + resultSet.getString("cityUser"));
+
+
+    } catch (SQLException e) {
+        System.out.println("error: " + e.getMessage() );
+
+    } catch (ClassNotFoundException e) {
+        throw new RuntimeException(e);
     }
-    public int getUserSize(){
-        return customers.size();
+    System.out.println("success");
+    return null;
     }
-//    public int getIdUser(int id) {
-//        return id;
-//    }
-//    public String getEmail(String email) {
-//        return email;
-//    }
-//    public String getPassword(int i) {
-//        return customers.get(i).getPassword();
-//    }
-//    public int getId(int i) {
-//        return customers.get(i).getId();
-//    }
+
+
 
 }
