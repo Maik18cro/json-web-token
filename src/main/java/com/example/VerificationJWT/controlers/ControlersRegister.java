@@ -1,33 +1,28 @@
     package com.example.VerificationJWT.controlers;
 
 import com.example.VerificationJWT.databases.DataBase;
+
 import com.example.VerificationJWT.response.Response;
+import com.example.VerificationJWT.response.ResponseCreateUsers;
 import com.example.VerificationJWT.response.ResponseErorr;
-import com.example.VerificationJWT.response.ResponseToken;
 import com.example.VerificationJWT.response.ResponseUsers;
 import com.example.VerificationJWT.services.User;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.Jwts;
 import org.springframework.web.bind.annotation.*;
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
+
 import java.sql.SQLException;
 import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
 
 
     @RestController
 public class ControlersRegister {
         DataBase dataBase = new DataBase();
-        ControlersToken controlersToken = new ControlersToken();
+
+
 
         @PostMapping("/register")
         @ResponseBody
         public Response Register(@RequestParam String email, @RequestParam String user, @RequestParam String password, @RequestParam String city) throws SQLException {
-//        User emailDatabase = dataBase.getUserByEmail(email);
-//        System.out.printf(String.valueOf(emailDatabase));
-
+            String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
 
             if (email.isEmpty() || user.isEmpty() || password.isEmpty() || city.isEmpty()) {
                 return new ResponseErorr(
@@ -37,14 +32,30 @@ public class ControlersRegister {
                         "complete all fields"
                 );
             }
-//        if (email.equals(emailDatabase)) {
-//            return new ResponseErorr(
-//                    "failure",
-//                    409,
-//                    "conflict in the database",
-//                    "data exits"
-//            );
-//        }
+            if (email.equals(dataBase.getUserEmail(email))) {
+                return new ResponseErorr(
+                        "failure",
+                        409,
+                        "conflict in the database",
+                        "email exits"
+                );
+            }
+            if (user.equals(dataBase.getUserName(user))) {
+                return new ResponseErorr(
+                        "failure",
+                        409,
+                        "conflict in the database",
+                        "user exits"
+                );
+            }
+            if (encodedPassword.equals(dataBase.getUserPassword(encodedPassword))) {
+                return new ResponseErorr(
+                        "failure",
+                        409,
+                        "conflict in the database",
+                        "password exits"
+                );
+            }
 
             if (!email.contains("@") || !email.contains(".")) {
                 return new ResponseErorr(
@@ -88,13 +99,13 @@ public class ControlersRegister {
                 );
             }
 
-            String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
+
 
 //        User userCreated = dataBase.createNewUser(email, user, encodedPassword,city);
             User userCreated = dataBase.database(email, user, encodedPassword, city);
 
-            return new ResponseUsers(
-                    userCreated,
+            return new ResponseCreateUsers(
+                    "User created successfully",
                     "ok",
                     200,
                     "all is OK"

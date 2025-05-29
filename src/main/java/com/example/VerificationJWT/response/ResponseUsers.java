@@ -3,16 +3,40 @@ package com.example.VerificationJWT.response;
 import com.example.VerificationJWT.services.User;
 
 public class ResponseUsers extends Response {
-    private User data;
+    private String id;
+    private String email;
+    private String name;
+    private String password;
+    private String city;
 
 
-    public ResponseUsers (User data, String status, int statusCode, String message){
-        super(status,statusCode, message);
-        this.data = data;
+    public ResponseUsers(String id, String email, String name, String password, String city, String status, int statusCode, String message) {
+        super(status, statusCode, message);
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.city = city;
     }
 
-    public User getData () {
-        return data;
+    public String getId() {
+        return id;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getCity() {
+        return city;
+    }
 }
+
