@@ -5,7 +5,6 @@ import com.example.VerificationJWT.databases.DataBase;
 import com.example.VerificationJWT.response.Response;
 import com.example.VerificationJWT.response.ResponseCreateUsers;
 import com.example.VerificationJWT.response.ResponseErorr;
-import com.example.VerificationJWT.response.ResponseUsers;
 import com.example.VerificationJWT.services.User;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,14 +45,6 @@ public class ControlersRegister {
                         409,
                         "conflict in the database",
                         "user exits"
-                );
-            }
-            if (encodedPassword.equals(dataBase.getUserPassword(encodedPassword))) {
-                return new ResponseErorr(
-                        "failure",
-                        409,
-                        "conflict in the database",
-                        "password exits"
                 );
             }
 
@@ -100,15 +91,13 @@ public class ControlersRegister {
             }
 
 
-
-//        User userCreated = dataBase.createNewUser(email, user, encodedPassword,city);
             User userCreated = dataBase.database(email, user, encodedPassword, city);
 
             return new ResponseCreateUsers(
                     "User created successfully",
                     "ok",
                     200,
-                    "all is OK"
+                    "Created"
             );
         }
 //    @PostMapping("/user")

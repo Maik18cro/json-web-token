@@ -19,24 +19,5 @@ public class ResponseUsers extends Response {
         this.city = city;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getCity() {
-        return city;
-    }
 }
 

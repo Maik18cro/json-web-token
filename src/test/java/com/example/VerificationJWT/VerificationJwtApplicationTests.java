@@ -8,6 +8,7 @@ class VerificationJwtApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }

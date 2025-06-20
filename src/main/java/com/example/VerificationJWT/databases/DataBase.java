@@ -13,6 +13,7 @@ public class DataBase {
     final String passwordDatabases = "";
 
 
+
     public User database(String email, String name, String password, String city) throws SQLException{
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -81,6 +82,28 @@ public Response loginVerication(String email, String password) {
     }
     System.out.println("success");
     return null;
+    }
+    //get id according to email
+    public int getId(String email) {
+        int idUser = 0;
+        Connection connection = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url, userDatabases, passwordDatabases);
+            Statement statement = connection.createStatement();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM DatabasesJwt WHERE emailUser= ?");
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                idUser = resultSet.getInt("id");
+            }
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println("error: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return idUser;
     }
 
     //get user email
@@ -189,6 +212,38 @@ public Response loginVerication(String email, String password) {
                 200,
                 "OK"
         );
+    }
+    //delete user by id
+    public Response deleteUser(int id) {
+        Connection connection = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url, userDatabases, passwordDatabases);
+            Statement statement = connection.createStatement();
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM DatabasesJwt WHERE id= ?");
+            preparedStatement.setInt(1, id);
+            int rowsAffected = preparedStatement.executeUpdate();
+            connection.close();
+            if (rowsAffected > 0) {
+                return new Response(
+                        "success",
+                        200,
+                        "OK"
+                );
+            } else {
+                return new ResponseErorr(
+                        "failure",
+                        404,
+                        "Not Found",
+                        "User not found"
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("error: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
 }
